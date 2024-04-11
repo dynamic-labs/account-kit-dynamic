@@ -1,7 +1,9 @@
 import { parseEther } from "viem";
-import React from "react";
+import React, { useState } from "react";
 
-const Transaction: React.FC<any> = ({ alchemyClient }) => {
+const GaslessTransaction: React.FC<any> = ({ alchemyClient, chain }) => {
+  const [sendingTransaction, setSendingTransaction] = useState(false);
+
   const sendTransaction = async (
     recipient: string,
     amount: string
@@ -13,11 +15,19 @@ const Transaction: React.FC<any> = ({ alchemyClient }) => {
     };
 
     try {
+      const eligibility = await alchemyClient.checkGasSponsorshipEligibility(
+        transaction
+      );
+
+      console.log(transaction);
+
+      setSendingTransaction(true);
       const txHash = await alchemyClient.sendTransaction(transaction);
 
       console.log(
-        `User operation included: https://sepolia.etherscan.io/tx/${txHash}`
+        `User operation included: https://${chain.name.toLowerCase()}.etherscan.io/tx/${txHash}`
       );
+      setSendingTransaction(false);
     } catch (e) {
       console.error(e);
     }
@@ -48,8 +58,9 @@ const Transaction: React.FC<any> = ({ alchemyClient }) => {
           Send
         </button>
       </form>
+      {sendingTransaction && <p>Sending transaction...</p>}
     </div>
   );
 };
 
-export default Transaction;
+export default GaslessTransaction;
