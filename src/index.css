@@ -23,3 +23,14 @@ code {
 .nav_element_inner {
   background-color: black;
 }
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.views-container {
+}

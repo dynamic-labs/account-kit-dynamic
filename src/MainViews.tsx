@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import SignMessage from "./alchemy/AlchemySignMessage.tsx";
+import SignMessage from "./views/SignMessage.tsx";
 import GaslessTransaction from "./alchemy/AlchemyTransaction.tsx";
 import BatchTransaction from "./alchemy/AlchemyBatchTransaction.tsx";
 import SessionKeys from "./alchemy/AlchemySessionKeys.tsx";
 import { HStack, Button } from "@chakra-ui/react";
 
 export default function MainViews({
-  alchemyClient,
+  provider,
+  client,
   chain,
   setViewOpen,
   viewOpen,
@@ -70,23 +71,21 @@ export default function MainViews({
       )}
 
       <div>
-        {signMessageView && <SignMessage alchemyClient={alchemyClient} />}
+        {signMessageView && <SignMessage client={client} />}
 
         {sendTransactionView && (
-          <GaslessTransaction alchemyClient={alchemyClient} chain={chain} />
+          <GaslessTransaction client={client} chain={chain} />
         )}
       </div>
 
       <div>
         {batchTransactionView && (
-          <BatchTransaction alchemyClient={alchemyClient} chain={chain} />
+          <BatchTransaction client={client} chain={chain} />
         )}
       </div>
 
       <div>
-        {sessionKeysView && (
-          <SessionKeys alchemyClient={alchemyClient} chain={chain} />
-        )}
+        {sessionKeysView && <SessionKeys client={client} chain={chain} />}
       </div>
     </div>
   );

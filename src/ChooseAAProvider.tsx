@@ -7,8 +7,6 @@ export default function ChooseAAProvider({
 }): JSX.Element {
   return (
     <div>
-      <h1>Choose AA Provider</h1>
-
       <HStack>
         <Button
           onClick={() => {

@@ -1,57 +1,57 @@
 import React, { useEffect, useState } from "react";
-import useAlchemyClient from "./alchemy/alchemy.ts";
+
+import { Box } from "@chakra-ui/react";
 
 import {
   useDynamicContext,
   DynamicConnectButton,
 } from "@dynamic-labs/sdk-react-core";
-import { type SmartAccountClient } from "@alchemy/aa-core";
-import { sepolia } from "@alchemy/aa-core";
 
 import MainViews from "./MainViews.tsx";
 
-const Home = ({ globalAlchemyClient, setGlobalAlchemyClient }): JSX.Element => {
-  const [viewOpen, setViewOpen] = useState<boolean>(false);
-  const [shouldExtendWithSessionKeys, setShouldExtendWithSessionKeys] =
-    useState<boolean>(false);
+import useSetAAClient from "./hooks/useSetAAClient.ts";
+
+import { sepolia } from "@alchemy/aa-core";
+
+const Home = ({ currentProvider, currentClient, setClient }): JSX.Element => {
+  const localClient = useSetAAClient(currentProvider, sepolia);
+
+  useEffect(() => {
+    if (localClient && !currentClient) {
+      setClient(localClient);
+    } else if (
+      localClient &&
+      currentClient &&
+      localClient.provider !== currentClient.provider
+    ) {
+      setClient(localClient);
+    }
+  }, [localClient, currentClient]);
 
   const { user } = useDynamicContext();
 
-  const chain = sepolia;
+  const [viewOpen, setViewOpen] = useState<boolean>(false);
 
-  const alchemyClient: SmartAccountClient | null = useAlchemyClient(
-    shouldExtendWithSessionKeys,
-    chain
-  );
-
-  useEffect(() => {
-    console.log(alchemyClient);
-    if (alchemyClient && !globalAlchemyClient)
-      setGlobalAlchemyClient(alchemyClient);
-  }, [alchemyClient]);
-
-  useEffect(() => {
-    if (!viewOpen) {
-      setShouldExtendWithSessionKeys(false);
-    }
-  }, [viewOpen]);
+  // const [shouldExtendWithSessionKeys, setShouldExtendWithSessionKeys] =
+  //   useState<boolean>(false);
 
   const accessButton = <div>Sign up/Log in</div>;
 
   return (
-    <div>
+    <Box className="main-container">
       {!user && <DynamicConnectButton>{accessButton}</DynamicConnectButton>}
-      {alchemyClient && (
-        <div>
+      {currentClient && (
+        <Box className="views-container">
           <MainViews
-            alchemyClient={alchemyClient}
-            chain={chain}
+            provider={currentProvider}
+            client={currentClient}
+            chain={sepolia}
             setViewOpen={setViewOpen}
             viewOpen={viewOpen}
           />
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

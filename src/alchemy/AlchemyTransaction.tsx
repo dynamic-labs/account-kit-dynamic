@@ -19,8 +19,6 @@ const GaslessTransaction: React.FC<any> = ({ alchemyClient, chain }) => {
         transaction
       );
 
-      console.log(transaction);
-
       setSendingTransaction(true);
       const txHash = await alchemyClient.sendTransaction(transaction);
 

@@ -26,14 +26,9 @@ const config = createConfig({
 const queryClient = new QueryClient();
 
 export default function App() {
-  const [currentProvider, setCurrentProvider] = useState<
-    "Alchemy" | "Biconomy" | ""
-  >("");
-  const [globalAlchemyClient, setGlobalAlchemyClient] =
-    useState<SmartAccountClient | null>(null);
-
-  const [globalBiconomyClient, setGlobalBiconomyClient] =
-    useState<BiconomySmartAccountV2 | null>(null);
+  const [client, setClient] = useState<any>(null);
+  const providers: string[] = ["Alchemy", "Biconomy"];
+  const [currentProvider, setCurrentProvider] = useState<string>(providers[0]);
 
   return (
     <ChakraProvider>
@@ -47,13 +42,14 @@ export default function App() {
           <QueryClientProvider client={queryClient}>
             <DynamicWagmiConnector>
               <Header
-                globalAlchemyClient={globalAlchemyClient}
+                client={client}
                 currentProvider={currentProvider}
                 setCurrentProvider={setCurrentProvider}
               />
               <Home
-                globalAlchemyClient={globalAlchemyClient}
-                setGlobalAlchemyClient={setGlobalAlchemyClient}
+                currentProvider={currentProvider}
+                currentClient={client}
+                setClient={setClient}
               />
             </DynamicWagmiConnector>
           </QueryClientProvider>

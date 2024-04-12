@@ -1,33 +1,48 @@
-import React, { useState } from "react";
-const [address, setAddress] = useState<string>("");
-const [loading, setLoading] = useState<boolean>(false);
-const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(
-  null
-);
-const [provider, setProvider] = useState<ethers.providers.Provider | null>(
-  null
-);
+import { useState, useEffect } from "react";
 
-const bundlerUrl: "https://bundler.biconomy.io/api/v2/80001/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
-const paymasterApiKey = "paymasterApiKey";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import {
+  createSmartAccountClient,
+  BiconomySmartAccountV2,
+} from "@biconomy/account";
 
-const createBiconomyClient = async () => {
-  // @ts-ignore
-  const { ethereum } = window;
-  try {
-    setLoading(true);
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    setProvider(provider);
-    let biconomySmartAccount = await createSmartAccountClient({
-      signer,
-      bundlerUrl,
-      biconomyPaymasterApiKey: paymasterApiKey,
-    });
+import { type WalletClient } from "viem";
 
-    setLoading(false);
-  } catch (error) {
-    console.error(error);
-  }
+const useBiconomyClient = (chain) => {
+  const { primaryWallet, isAuthenticated } = useDynamicContext();
+  const [client, setClient] = useState<BiconomySmartAccountV2 | null>(null);
+
+  const bundlerUrl =
+    "https://bundler.biconomy.io/api/v2/80001/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
+  const paymasterApiKey = process.env.BICONOMY_PAYMASTER_API_KEY;
+
+  useEffect(() => {
+    const initializeClient = async () => {
+      const dynamicProvider =
+        (await primaryWallet?.connector?.getWalletClient()) as WalletClient;
+
+      if (!dynamicProvider) return;
+
+      const dynamicSigner = await primaryWallet?.connector?.getSigner();
+
+      let biconomyClient = await createSmartAccountClient({
+        signer: dynamicSigner,
+        bundlerUrl,
+        biconomyPaymasterApiKey: paymasterApiKey,
+        chainId: chain.id,
+      });
+
+      biconomyClient.provider = "Biconomy";
+
+      console.log(biconomyClient);
+
+      setClient(biconomyClient);
+    };
+
+    if (isAuthenticated && primaryWallet?.connector) initializeClient();
+  }, [isAuthenticated, primaryWallet]);
+
+  return client;
 };
+
+export default useBiconomyClient;

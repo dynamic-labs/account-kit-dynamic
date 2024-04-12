@@ -1,35 +1,28 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDynamicContext, DynamicNav } from "@dynamic-labs/sdk-react-core";
-import { HStack } from "@chakra-ui/react";
+import { HStack, Box } from "@chakra-ui/react";
 
 import ChooseAAProvider from "./ChooseAAProvider.tsx";
 
+import useAddressAndBalance from "./hooks/useAddressAndBalance.ts";
+
 export default function Header({
-  globalAlchemyClient,
+  client,
   currentProvider,
   setCurrentProvider,
 }) {
   const { user } = useDynamicContext();
 
-  const [balance, setBalance] = React.useState<number | null>(null);
-  const [address, setAddress] = React.useState<string | null>(null);
-
-  useEffect(() => {
-    if (globalAlchemyClient && user && (!balance || !address)) {
-      const address = globalAlchemyClient.account.address;
-
-      globalAlchemyClient.getBalance({ address }).then((balance) => {
-        setBalance(balance);
-      });
-
-      setAddress(address);
-    }
-  }, [balance, address, user, globalAlchemyClient]);
+  const { address, balance } = useAddressAndBalance(
+    currentProvider,
+    client,
+    user
+  );
 
   return (
-    <nav className="nav">
+    <Box paddingY={4}>
       {user && (
-        <HStack className="nav_element">
+        <HStack className="nav_element" justify="space-evenly">
           <DynamicNav />
           <HStack className="nav_element_inner">
             {address && (
@@ -45,6 +38,6 @@ export default function Header({
           />
         </HStack>
       )}
-    </nav>
+    </Box>
   );
 }
