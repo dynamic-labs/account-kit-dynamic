@@ -15,9 +15,11 @@ const GaslessTransaction: React.FC<any> = ({ alchemyClient, chain }) => {
     };
 
     try {
-      const eligibility = await alchemyClient.checkGasSponsorshipEligibility(
-        transaction
-      );
+      // const eligibility = await alchemyClient.checkGasSponsorshipEligibility(
+      //   transaction
+      // );
+
+      console.log(alchemyClient);
 
       setSendingTransaction(true);
       const txHash = await alchemyClient.sendTransaction(transaction);

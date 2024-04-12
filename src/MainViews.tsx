@@ -74,7 +74,7 @@ export default function MainViews({
         {signMessageView && <SignMessage client={client} />}
 
         {sendTransactionView && (
-          <GaslessTransaction client={client} chain={chain} />
+          <GaslessTransaction alchemyClient={client} chain={chain} />
         )}
       </div>
 
