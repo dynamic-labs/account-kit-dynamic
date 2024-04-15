@@ -6,17 +6,21 @@ import {
   SessionKeySigner,
 } from "@alchemy/aa-accounts";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-import { useEffect, useState } from "react";
 
-const useSessionKeys = (client, chain) => {
-  const [sessionKeyClient, setSessionKeyClient] = useState<any>(null);
-  const createClient = async (client, chain) => {
+import { sepolia } from "@alchemy/aa-core";
+
+const createAlchemySessionKeysClient = async (client) => {
+  if (client?.addSessionKey) {
+    return client;
+  }
+
+  const createClient = async () => {
     const sessionKeySigner = new SessionKeySigner();
     // 1. check if the plugin is installed
     const isPluginInstalled = await client
       .getInstalledPlugins({})
       // This checks using the default address for the chain, but you can always pass in your own plugin address here as an override
-      .then((x) => x.includes(SessionKeyPlugin.meta.addresses[chain.id]));
+      .then((x) => x.includes(SessionKeyPlugin.meta.addresses[sepolia.id]));
 
     // 2. if the plugin is not installed, then install it and set up the session key
     if (!isPluginInstalled) {
@@ -52,7 +56,7 @@ const useSessionKeys = (client, chain) => {
     // 3. set up a client that's using our session key
     const sessionKeyClient = (
       await createModularAccountAlchemyClient({
-        chain,
+        chain: sepolia,
         signer: sessionKeySigner,
         apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
         // this is important because it tells the client to use our previously deployed account
@@ -60,18 +64,10 @@ const useSessionKeys = (client, chain) => {
       })
     ).extend(sessionKeyPluginActions);
 
-    setSessionKeyClient(sessionKeyClient);
+    return sessionKeyClient;
   };
 
-  useEffect(() => {
-    if (client?.addSessionKey) {
-      console.log("alchemy client with plugin functionality");
-
-      createClient(client, chain);
-    }
-  }, [client, chain]);
-
-  return sessionKeyClient;
+  return await createClient();
 };
 
-export default useSessionKeys;
+export default createAlchemySessionKeysClient;

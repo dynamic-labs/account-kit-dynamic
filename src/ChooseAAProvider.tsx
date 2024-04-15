@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { HStack, Button } from "@chakra-ui/react";
-import ClientContext from "./context/ClientContext.ts";
+import { useClient } from "./providers/ClientProvider.tsx";
 
 const ChooseAAProviderComponent = () => {
-  const { client, setProvider } = useContext(ClientContext);
+  const { client, setProvider } = useClient();
   const providers = ["Alchemy", "Biconomy"];
 
   return (
@@ -19,7 +19,6 @@ const ChooseAAProviderComponent = () => {
           </Button>
         ))}
       </HStack>
-      {client && <div>Current Client: {client.provider}</div>}
     </div>
   );
 };

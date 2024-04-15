@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import signMessage from "../utils/signMessage.ts";
 
-import ClientContext from "../context/ClientContext.ts";
+import { useClient } from "../providers/ClientProvider.tsx";
 
 import { Input, Button, HStack, Box, VStack } from "@chakra-ui/react";
 
 const SignMessage: React.FC<any> = () => {
-  const { client } = useContext(ClientContext);
+  const { client } = useClient();
 
   return (
     <Box>
@@ -21,7 +21,11 @@ const SignMessage: React.FC<any> = () => {
               onClick={() => {
                 const message = document.getElementById("message");
                 if (message) {
-                  signMessage(client, message.value);
+                  try {
+                    signMessage(client, message.value);
+                  } catch (e) {
+                    console.error(e);
+                  }
                 }
               }}
               type="submit"

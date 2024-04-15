@@ -10,7 +10,7 @@ import { useState } from "react";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
-import ClientProvider from "./providers/ClientProvider.tsx";
+import { ClientProvider } from "./providers/ClientProvider.tsx";
 
 import Header from "./Header.tsx";
 import Home from "./Home.tsx";

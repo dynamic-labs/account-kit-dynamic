@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
 
-// Adapter for Alchemy
-function alchemyGetAddressAndBalance(client, setBalance, setAddress) {
+async function alchemyGetAddressAndBalance(client, setBalance, setAddress) {
   const address = client.account.address;
-  client
-    .getBalance({ address })
-    .then((balance) => {
-      setBalance(balance);
-    })
-    .catch((error) => console.error("Failed to fetch balance:", error));
   setAddress(address);
+  const balance = await client.getBalance({ address });
+  setBalance(balance);
 }
 
-// Adapter for Biconomy (assuming a different method structure)
-function biconomyGetAddressAndBalance(client, setBalance, setAddress) {
-  // Assuming you want to reset to a default state or this is just for the example
-  setAddress("Default Biconomy Address"); // Use a default or fetched address
-  setBalance("0x0"); // Use a default or fetched balance
+async function biconomyGetAddressAndBalance(client, setBalance, setAddress) {
+  const address = await client.getAccountAddress();
+  setAddress(address);
+
+  // const balances = await client.getBalances([address]);
+  // console.log(balances);
+  setBalance("0x0");
 }
 
 const clientMethods = {

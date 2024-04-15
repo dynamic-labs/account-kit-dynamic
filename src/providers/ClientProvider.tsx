@@ -1,21 +1,30 @@
-import { sepolia } from "@alchemy/aa-core";
-
-import React, { useState, useMemo } from "react";
-import ClientContext from "../context/ClientContext.ts";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import useChooseAAClient from "../hooks/useChooseAAClient.ts";
 
-const ClientProvider: React.FC = ({ children }) => {
-  const [provider, setProvider] = useState("Alchemy"); // Default provider
-  const client = useChooseAAClient(provider, sepolia);
+import { sepolia } from "@alchemy/aa-core";
 
-  // Context value now includes setProvider to allow consumers to change the provider
-  const contextValue = useMemo(
-    () => ({
-      client,
-      setProvider, // Allows consumer components to change the provider
-    }),
-    [client]
-  );
+const ClientContext = createContext({
+  client: null,
+  setProvider: () => {},
+});
+
+export const ClientProvider = ({ children }) => {
+  const [provider, setProvider] = useState("Alchemy");
+  const [client, setClient] = useState(null);
+
+  // Using the hook to obtain the client based on the current provider
+  const fetchedClient = useChooseAAClient(provider, sepolia);
+
+  // Effect to update the client in state when fetchedClient changes
+  useEffect(() => {
+    setClient(fetchedClient);
+  }, [fetchedClient]);
+
+  // Providing the context value that will cause re-renders when client changes
+  const contextValue = {
+    client,
+    setProvider,
+  };
 
   return (
     <ClientContext.Provider value={contextValue}>
@@ -24,4 +33,4 @@ const ClientProvider: React.FC = ({ children }) => {
   );
 };
 
-export default ClientProvider;
+export const useClient = () => useContext(ClientContext);

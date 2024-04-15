@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useDynamicContext, DynamicNav } from "@dynamic-labs/sdk-react-core";
 import { HStack, Box } from "@chakra-ui/react";
 
-import ClientContext from "./context/ClientContext.ts";
+import { useClient } from "./providers/ClientProvider.tsx";
 
 import ChooseAAProvider from "./ChooseAAProvider.tsx";
 
 import useAddressAndBalance from "./hooks/useAddressAndBalance.ts";
 
 export default function Header() {
-  const { client } = useContext(ClientContext);
+  const { client } = useClient();
   const { user } = useDynamicContext();
 
   const { address, balance } = useAddressAndBalance(client, user);
@@ -24,7 +24,9 @@ export default function Header() {
               <p className="smart-account-client-address">Address: {address}</p>
             )}
             {balance && (
-              <p className="smart-account-client-balance">Balance: {balance}</p>
+              <p className="smart-account-client-balance">
+                Balance: {balance.toString()}
+              </p>
             )}
           </HStack>
           <ChooseAAProvider />

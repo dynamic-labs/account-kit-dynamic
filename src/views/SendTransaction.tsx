@@ -3,13 +3,13 @@ import sendTransaction from "../utils/sendTransaction.ts";
 
 import { VStack, HStack, Box, Button, Input } from "@chakra-ui/react";
 
-const SendTransaction: React.FC<any> = ({ client, chain }) => {
+const SendTransaction: React.FC<any> = ({ client }) => {
   const [sendingTransaction, setSendingTransaction] = useState(false);
 
   const processTransaction = async (recipient, amount) => {
     try {
       setSendingTransaction(true);
-      await sendTransaction(client, chain, recipient, amount);
+      await sendTransaction(client, recipient, amount);
       setSendingTransaction(false);
     } catch (e) {
       console.error(e);

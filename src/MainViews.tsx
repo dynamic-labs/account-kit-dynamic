@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import SignMessage from "./views/SignMessage.tsx";
 import SendTransaction from "./views/SendTransaction.tsx";
 import SendBatchTransaction from "./views/BatchTransactions.tsx";
 import SessionKeys from "./views/SessionKeys.tsx";
 
-import ClientContext from "./context/ClientContext.ts";
+import { useClient } from "./providers/ClientProvider.tsx";
 
 import { Box, VStack, HStack, Button } from "@chakra-ui/react";
 
@@ -13,7 +13,7 @@ export default function MainViews({
   setCurrentViewOpen,
   currentViewOpen,
 }): JSX.Element {
-  const { client } = useContext(ClientContext);
+  const { client } = useClient();
 
   return (
     <Box>

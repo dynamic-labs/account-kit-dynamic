@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 
 import { Box } from "@chakra-ui/react";
 
@@ -11,17 +11,14 @@ import MainViews from "./MainViews.tsx";
 
 import { sepolia } from "@alchemy/aa-core";
 
-import ClientContext from "./context/ClientContext.ts";
+import { useClient } from "./providers/ClientProvider.tsx";
 
 const Home = (): JSX.Element => {
-  const { client } = useContext(ClientContext);
+  const { client } = useClient();
 
   const { user } = useDynamicContext();
 
   const [currentViewOpen, setCurrentViewOpen] = useState<boolean>(false);
-
-  // const [shouldExtendWithSessionKeys, setShouldExtendWithSessionKeys] =
-  //   useState<boolean>(false);
 
   const accessButton = <div>Sign up/Log in</div>;
 
