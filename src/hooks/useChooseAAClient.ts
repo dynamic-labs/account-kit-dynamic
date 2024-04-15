@@ -6,9 +6,9 @@ const clientHooks = {
   Biconomy: useBiconomyClient,
 };
 
-const useSetAAClient = (provider, chain) => {
+const useChooseAAClient = (provider, chain) => {
   const ClientHook = clientHooks[provider];
   return ClientHook ? ClientHook(chain) : null;
 };
 
-export default useSetAAClient;
+export default useChooseAAClient;

@@ -25,24 +25,24 @@ const clientMethods = {
 };
 
 // Define a standard interface for client operations
-function getAddressAndBalance(provider, client, setBalance, setAddress) {
-  const ClientMethod = clientMethods[provider];
+function getAddressAndBalance(client, setBalance, setAddress) {
+  const ClientMethod = clientMethods[client.provider];
   if (ClientMethod) {
     ClientMethod(client, setBalance, setAddress);
   } else {
-    console.error("No client method available for provider:", provider);
+    console.error("No client method available for provider:", client.provider);
   }
 }
 
-function useAddressAndBalance(provider, client, user) {
+function useAddressAndBalance(client, user) {
   const [balance, setBalance] = useState(null);
   const [address, setAddress] = useState(null);
 
   useEffect(() => {
     if (client && user) {
-      getAddressAndBalance(provider, client, setBalance, setAddress);
+      getAddressAndBalance(client, setBalance, setAddress);
     }
-  }, [provider, user, client, setBalance, setAddress]); // Added 'provider' to dependencies
+  }, [user, client, setBalance, setAddress]); // Added 'provider' to dependencies
 
   return { address, balance };
 }

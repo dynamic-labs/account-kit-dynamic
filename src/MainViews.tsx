@@ -1,92 +1,84 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import SignMessage from "./views/SignMessage.tsx";
-import GaslessTransaction from "./alchemy/AlchemyTransaction.tsx";
-import BatchTransaction from "./alchemy/AlchemyBatchTransaction.tsx";
-import SessionKeys from "./alchemy/AlchemySessionKeys.tsx";
-import { HStack, Button } from "@chakra-ui/react";
+import SendTransaction from "./views/SendTransaction.tsx";
+import SendBatchTransaction from "./views/BatchTransactions.tsx";
+import SessionKeys from "./views/SessionKeys.tsx";
+
+import ClientContext from "./context/ClientContext.ts";
+
+import { Box, VStack, HStack, Button } from "@chakra-ui/react";
 
 export default function MainViews({
-  provider,
-  client,
   chain,
-  setViewOpen,
-  viewOpen,
+  setCurrentViewOpen,
+  currentViewOpen,
 }): JSX.Element {
-  const [sendTransactionView, setSendTransactionView] =
-    useState<boolean>(false);
-  const [batchTransactionView, setBatchTransactionView] =
-    useState<boolean>(false);
-  const [sessionKeysView, setSessionKeysView] = useState<boolean>(false);
-  const [signMessageView, setSignMessageView] = useState<boolean>(false);
+  const { client } = useContext(ClientContext);
 
   return (
-    <div>
-      {viewOpen && <Button onClick={() => setViewOpen(!viewOpen)}>Back</Button>}
-      {!viewOpen && (
-        <HStack>
-          {!signMessageView && (
+    <Box>
+      <VStack marginTop="-10rem">
+        {currentViewOpen && (
+          <Button marginY={12} onClick={() => setCurrentViewOpen(null)}>
+            Back
+          </Button>
+        )}
+        {!currentViewOpen && (
+          <HStack>
             <Button
               onClick={() => {
-                setViewOpen(!viewOpen);
-                setSignMessageView(!signMessageView);
+                setCurrentViewOpen("Sign message");
               }}
             >
               Sign message
             </Button>
-          )}
 
-          {!sendTransactionView && (
             <Button
               onClick={() => {
-                setViewOpen(!viewOpen);
-                setSendTransactionView(!sendTransactionView);
+                setCurrentViewOpen("Send transaction");
               }}
             >
               Send transaction
             </Button>
-          )}
 
-          {!batchTransactionView && (
             <Button
               onClick={() => {
-                setViewOpen(!viewOpen);
-                setBatchTransactionView(!batchTransactionView);
+                setCurrentViewOpen("Batch transaction");
               }}
             >
               Send batch transactions
             </Button>
-          )}
 
-          {!sessionKeysView && (
             <Button
               onClick={() => {
-                setViewOpen(!viewOpen);
-                setSessionKeysView(!sessionKeysView);
+                setCurrentViewOpen("Session keys");
               }}
             >
               Session keys
             </Button>
-          )}
-        </HStack>
-      )}
-
-      <div>
-        {signMessageView && <SignMessage client={client} />}
-
-        {sendTransactionView && (
-          <GaslessTransaction alchemyClient={client} chain={chain} />
+          </HStack>
         )}
-      </div>
+      </VStack>
 
-      <div>
-        {batchTransactionView && (
-          <BatchTransaction client={client} chain={chain} />
+      <Box>
+        {currentViewOpen && (
+          <div>
+            {currentViewOpen === "Sign message" && <SignMessage />}
+
+            {currentViewOpen === "Send transaction" && (
+              <SendTransaction client={client} chain={chain} />
+            )}
+
+            {currentViewOpen === "Batch transaction" && (
+              <SendBatchTransaction client={client} chain={chain} />
+            )}
+
+            {currentViewOpen === "Session keys" && (
+              <SessionKeys client={client} chain={chain} />
+            )}
+          </div>
         )}
-      </div>
-
-      <div>
-        {sessionKeysView && <SessionKeys client={client} chain={chain} />}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

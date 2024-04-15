@@ -1,33 +1,37 @@
-import React from "react";
+import React, { useContext } from "react";
 import signMessage from "../utils/signMessage.ts";
 
-import { Input, Button, HStack } from "@chakra-ui/react";
+import ClientContext from "../context/ClientContext.ts";
 
-const SignMessage: React.FC<any> = ({ client }) => {
+import { Input, Button, HStack, Box, VStack } from "@chakra-ui/react";
+
+const SignMessage: React.FC<any> = () => {
+  const { client } = useContext(ClientContext);
+
   return (
-    <div>
-      <h2>Send your message</h2>
+    <Box>
+      <VStack>
+        <h2>Send your message</h2>
 
-      <form onSubmit={(e) => e.preventDefault()}>
-        <HStack>
-          <label>
-            Message:
-            <Input type="text" id="message" />
-          </label>
-          <Button
-            onClick={() => {
-              const message = document.getElementById("message");
-              if (message) {
-                signMessage(client, message.value);
-              }
-            }}
-            type="submit"
-          >
-            Send
-          </Button>
-        </HStack>
-      </form>
-    </div>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <HStack>
+            <Input type="text" id="message" placeholder="Message here" />
+
+            <Button
+              onClick={() => {
+                const message = document.getElementById("message");
+                if (message) {
+                  signMessage(client, message.value);
+                }
+              }}
+              type="submit"
+            >
+              Send
+            </Button>
+          </HStack>
+        </form>
+      </VStack>
+    </Box>
   );
 };
 

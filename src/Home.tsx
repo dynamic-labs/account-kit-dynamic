@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { Box } from "@chakra-ui/react";
 
@@ -9,28 +9,16 @@ import {
 
 import MainViews from "./MainViews.tsx";
 
-import useSetAAClient from "./hooks/useSetAAClient.ts";
-
 import { sepolia } from "@alchemy/aa-core";
 
-const Home = ({ currentProvider, currentClient, setClient }): JSX.Element => {
-  const localClient = useSetAAClient(currentProvider, sepolia);
+import ClientContext from "./context/ClientContext.ts";
 
-  useEffect(() => {
-    if (localClient && !currentClient) {
-      setClient(localClient);
-    } else if (
-      localClient &&
-      currentClient &&
-      localClient.provider !== currentClient.provider
-    ) {
-      setClient(localClient);
-    }
-  }, [localClient, currentClient]);
+const Home = (): JSX.Element => {
+  const { client } = useContext(ClientContext);
 
   const { user } = useDynamicContext();
 
-  const [viewOpen, setViewOpen] = useState<boolean>(false);
+  const [currentViewOpen, setCurrentViewOpen] = useState<boolean>(false);
 
   // const [shouldExtendWithSessionKeys, setShouldExtendWithSessionKeys] =
   //   useState<boolean>(false);
@@ -40,14 +28,12 @@ const Home = ({ currentProvider, currentClient, setClient }): JSX.Element => {
   return (
     <Box className="main-container">
       {!user && <DynamicConnectButton>{accessButton}</DynamicConnectButton>}
-      {currentClient && (
+      {client && (
         <Box className="views-container">
           <MainViews
-            provider={currentProvider}
-            client={currentClient}
             chain={sepolia}
-            setViewOpen={setViewOpen}
-            viewOpen={viewOpen}
+            setCurrentViewOpen={setCurrentViewOpen}
+            currentViewOpen={currentViewOpen}
           />
         </Box>
       )}
