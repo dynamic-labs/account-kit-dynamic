@@ -8,9 +8,14 @@ import {
 
 import { type WalletClient } from "viem";
 
+import { useClient } from "../providers/ClientProvider.tsx";
+
 const useBiconomyClient = (chain) => {
+  const { client } = useClient();
   const { primaryWallet, isAuthenticated } = useDynamicContext();
-  const [client, setClient] = useState<BiconomySmartAccountV2 | null>(null);
+  const [localClient, setClient] = useState<BiconomySmartAccountV2 | null>(
+    null
+  );
 
   const bundlerUrl =
     "https://bundler.biconomy.io/api/v2/80001/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
@@ -39,10 +44,12 @@ const useBiconomyClient = (chain) => {
       setClient(biconomyClient);
     };
 
-    if (isAuthenticated && primaryWallet?.connector) initializeClient();
-  }, [isAuthenticated, primaryWallet]);
+    if (!client || client?.provider !== "Biconomy") {
+      if (isAuthenticated && primaryWallet?.connector) initializeClient();
+    }
+  }, [client, primaryWallet, isAuthenticated]);
 
-  return client;
+  return localClient;
 };
 
 export default useBiconomyClient;

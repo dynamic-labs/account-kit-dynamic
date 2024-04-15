@@ -5,15 +5,15 @@ import {
   type SmartAccountClient,
 } from "@alchemy/aa-core";
 
-// import { sessionKeyPluginActions } from "@alchemy/aa-accounts";
-
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { type WalletClient } from "viem";
+import { useClient } from "../providers/ClientProvider.tsx";
 
 const useAlchemyClient = (chain) => {
+  const { client } = useClient();
   const { primaryWallet, isAuthenticated } = useDynamicContext();
-  const [client, setClient] = useState<SmartAccountClient | null>(null);
+  const [localClient, setClient] = useState<SmartAccountClient | null>(null);
 
   useEffect(() => {
     const initializeClient = async () => {
@@ -27,10 +27,7 @@ const useAlchemyClient = (chain) => {
         "dynamic" // signer type
       );
 
-      const alchemyClient = ((client) =>
-        // shouldExtendWithSessionKeys
-        //   ? client.extend(sessionKeyPluginActions)
-        client)(
+      const alchemyClient = ((client) => client)(
         await createModularAccountAlchemyClient({
           apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
           chain,
@@ -47,10 +44,12 @@ const useAlchemyClient = (chain) => {
       setClient(alchemyClient);
     };
 
-    if (isAuthenticated && primaryWallet?.connector) initializeClient();
-  }, [isAuthenticated, primaryWallet]);
+    if (!client || client?.provider !== "Alchemy") {
+      if (isAuthenticated && primaryWallet?.connector) initializeClient();
+    }
+  }, [client, primaryWallet, isAuthenticated]);
 
-  return client;
+  return localClient;
 };
 
 export default useAlchemyClient;

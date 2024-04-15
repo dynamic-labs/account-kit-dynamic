@@ -30,6 +30,7 @@ const SessionKeys: React.FC<any> = () => {
       setSendingTransaction(false);
     } catch (e) {
       console.error(e);
+      setSendingTransaction(false);
     }
   };
   return (

@@ -1,5 +1,5 @@
-import useAlchemyClient from "../alchemy/alchemy.ts";
-import useBiconomyClient from "../biconomy/biconomy.ts";
+import useAlchemyClient from "../alchemy/createAlchemyClient.ts";
+import useBiconomyClient from "../biconomy/createBiconomyClient.ts";
 
 const clientHooks = {
   Alchemy: useAlchemyClient,
