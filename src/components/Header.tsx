@@ -2,11 +2,11 @@ import React from "react";
 import { useDynamicContext, DynamicNav } from "@dynamic-labs/sdk-react-core";
 import { HStack, Box } from "@chakra-ui/react";
 
-import { useClient } from "./providers/ClientProvider.tsx";
+import { useClient } from "../providers/ClientProvider.tsx";
 
 import ChooseAAProvider from "./ChooseAAProvider.tsx";
 
-import useAddressAndBalance from "./hooks/useAddressAndBalance.ts";
+import useAddressAndBalance from "../hooks/useAddressAndBalance.ts";
 
 export default function Header() {
   const { client } = useClient();

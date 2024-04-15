@@ -7,11 +7,11 @@ import {
   DynamicConnectButton,
 } from "@dynamic-labs/sdk-react-core";
 
-import MainViews from "./MainViews.tsx";
+import MainViews from "../MainViews.tsx";
 
 import { sepolia } from "@alchemy/aa-core";
 
-import { useClient } from "./providers/ClientProvider.tsx";
+import { useClient } from "../providers/ClientProvider.tsx";
 
 const Home = (): JSX.Element => {
   const { client } = useClient();

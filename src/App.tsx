@@ -6,14 +6,13 @@ import { createConfig, WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http } from "viem";
 import { mainnet } from "viem/chains";
-import { useState } from "react";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { ClientProvider } from "./providers/ClientProvider.tsx";
 
-import Header from "./Header.tsx";
-import Home from "./Home.tsx";
+import Header from "./components/Header.tsx";
+import Home from "./components/Home.tsx";
 
 const config = createConfig({
   chains: [mainnet],

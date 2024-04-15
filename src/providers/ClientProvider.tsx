@@ -1,26 +1,37 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
-import useChooseAAClient from "../hooks/useChooseAAClient.ts";
+import React, { useState, createContext, useContext } from "react";
+
+import useAlchemyClient from "../utils/alchemy/createAlchemyClient.ts";
+import useBiconomyClient from "../utils/biconomy/createBiconomyClient.ts";
 
 import { sepolia } from "@alchemy/aa-core";
 
-const ClientContext = createContext({
+interface IClientContext {
+  client: any; // Consider defining a more specific type than 'any' if possible.
+  setProvider: (provider: string) => void;
+}
+
+const ClientContext = createContext<IClientContext>({
   client: null,
   setProvider: () => {},
 });
 
+function useClientBasedOnProvider(provider: string) {
+  const alchemyClient = useAlchemyClient(sepolia);
+  const biconomyClient = useBiconomyClient(sepolia);
+
+  const clients = {
+    Alchemy: alchemyClient,
+    Biconomy: biconomyClient,
+  };
+
+  return clients[provider];
+}
+
 export const ClientProvider = ({ children }) => {
   const [provider, setProvider] = useState("Alchemy");
-  const [client, setClient] = useState(null);
 
-  // Using the hook to obtain the client based on the current provider
-  const fetchedClient = useChooseAAClient(provider, sepolia);
+  const client = useClientBasedOnProvider(provider);
 
-  // Effect to update the client in state when fetchedClient changes
-  useEffect(() => {
-    setClient(fetchedClient);
-  }, [fetchedClient]);
-
-  // Providing the context value that will cause re-renders when client changes
   const contextValue = {
     client,
     setProvider,

@@ -8,7 +8,7 @@ import {
 
 import { type WalletClient } from "viem";
 
-import { useClient } from "../providers/ClientProvider.tsx";
+import { useClient } from "../../providers/ClientProvider.tsx";
 
 const useBiconomyClient = (chain) => {
   const { client } = useClient();
@@ -38,8 +38,6 @@ const useBiconomyClient = (chain) => {
       });
 
       biconomyClient.provider = "Biconomy";
-
-      console.log(biconomyClient);
 
       setClient(biconomyClient);
     };

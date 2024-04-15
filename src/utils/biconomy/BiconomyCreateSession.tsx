@@ -16,8 +16,9 @@ import {
 } from "ethers/lib/utils";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
-
+import { type WalletClient } from "viem";
 
 interface props {
   smartAccount: BiconomySmartAccountV2;
@@ -38,17 +39,17 @@ export interface Permission {
   rules: Rule[];
 }
 
-const CreateSession: React.FC<props> = ({
-  smartAccount,
-  address,
-  provider,
-}) => {
+const useCreateSession = async ({ smartAccount, address }) => {
+  const { primaryWallet } = useDynamicContext();
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isSessionKeyModuleEnabled, setIsSessionKeyModuleEnabled] =
     useState(false);
 
   useEffect(() => {
     let checkSessionModuleEnabled = async () => {
+      const provider =
+        (await primaryWallet?.connector?.getWalletClient()) as WalletClient;
+
       if (!address || !smartAccount || !provider) {
         setIsSessionKeyModuleEnabled(false);
         return;
@@ -67,7 +68,7 @@ const CreateSession: React.FC<props> = ({
       }
     };
     checkSessionModuleEnabled();
-  }, [isSessionKeyModuleEnabled, address, smartAccount, provider]);
+  }, [isSessionKeyModuleEnabled, address, smartAccount, primaryWallet]);
 
   async function getABISVMSessionKeyData(
     sessionKey: string,
@@ -93,28 +94,17 @@ const CreateSession: React.FC<props> = ({
   }
 
   const createSession = async (enableSessionKeyModule: boolean) => {
-    toast.info("Creating Session...", {
-      position: "top-right",
-      autoClose: 15000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+    const provider =
+      (await primaryWallet?.connector?.getWalletClient()) as WalletClient;
+
     if (!address || !smartAccount || !provider) {
       alert("Please connect wallet first");
     }
     try {
       // Address of ABI Session Validation Module
       const abiSVMAddress = "0x000006bC2eCdAe38113929293d241Cf252D91861";
-      // -----> setMerkle tree tx flow
-      // create dapp side session key
-
 
       const sessionSigner = ethers.Wallet.createRandom();
-
 
       const sessionKeyEOA = await sessionSigner.getAddress();
       console.log("sessionKeyEOA", sessionKeyEOA);
@@ -182,44 +172,10 @@ const CreateSession: React.FC<props> = ({
       const transactionDetails = await userOpResponse.wait();
       console.log("txHash", transactionDetails.receipt.transactionHash);
       setIsSessionActive(true);
-      toast.success(`Success! Session created succesfully`, {
-        position: "top-right",
-        autoClose: 18000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
     } catch (err: any) {
       console.error(err);
     }
   };
-
-  return (
-    <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
-      {isSessionKeyModuleEnabled ? (
-        <button onClick={() => createSession(false)}>Create Session</button>
-      ) : (
-        <button onClick={() => createSession(true)}>
-          Enable and Create Session
-        </button>
-      )}
-    </div>
-  );
 };
 
-export default CreateSession;
+export default useCreateSession;

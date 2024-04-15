@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { HStack, Button } from "@chakra-ui/react";
-import { useClient } from "./providers/ClientProvider.tsx";
+import { useClient } from "../providers/ClientProvider.tsx";
 
 const ChooseAAProviderComponent = () => {
   const { client, setProvider } = useClient();

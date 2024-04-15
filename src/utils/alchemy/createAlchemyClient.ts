@@ -8,7 +8,7 @@ import {
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import { type WalletClient } from "viem";
-import { useClient } from "../providers/ClientProvider.tsx";
+import { useClient } from "../../providers/ClientProvider.tsx";
 
 const useAlchemyClient = (chain) => {
   const { client } = useClient();

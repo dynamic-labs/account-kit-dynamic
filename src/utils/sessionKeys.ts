@@ -1,6 +1,6 @@
 import { type SmartAccountClient } from "@alchemy/aa-core";
 
-import createAlchemySessionKeysClient from "../alchemy/createAlchemySessionKeys.ts";
+import createAlchemySessionKeysClient from "../utils/alchemy/createAlchemySessionKeys.ts";
 
 const alchemySessionKeys = async (client) => {
   const sessionKeysClient: SmartAccountClient | null =
