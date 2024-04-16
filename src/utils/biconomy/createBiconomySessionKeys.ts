@@ -14,7 +14,6 @@ import {
   hexlify,
   parseEther,
 } from "ethers/lib/utils";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
@@ -39,14 +38,21 @@ export interface Permission {
   rules: Rule[];
 }
 
-const useCreateSession = async ({ smartAccount, address }) => {
+const useCreateSession = async (smartAccount) => {
   const { primaryWallet } = useDynamicContext();
+
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isSessionKeyModuleEnabled, setIsSessionKeyModuleEnabled] =
     useState(false);
 
+  const fetchAddress = async () => {
+    return await smartAccount?.getAccountAddress();
+  };
+
   useEffect(() => {
     let checkSessionModuleEnabled = async () => {
+      const address = await fetchAddress();
+
       const provider =
         (await primaryWallet?.connector?.getWalletClient()) as WalletClient;
 
@@ -68,7 +74,7 @@ const useCreateSession = async ({ smartAccount, address }) => {
       }
     };
     checkSessionModuleEnabled();
-  }, [isSessionKeyModuleEnabled, address, smartAccount, primaryWallet]);
+  }, [isSessionKeyModuleEnabled, smartAccount, primaryWallet]);
 
   async function getABISVMSessionKeyData(
     sessionKey: string,
@@ -97,8 +103,14 @@ const useCreateSession = async ({ smartAccount, address }) => {
     const provider =
       (await primaryWallet?.connector?.getWalletClient()) as WalletClient;
 
+    const address = await smartAccount?.getAccountAddress();
+
+    console.log("provider", provider);
+    console.log("address", address);
+    console.log("smartAccount", smartAccount);
+
     if (!address || !smartAccount || !provider) {
-      alert("Please connect wallet first");
+      console.log("Please connect wallet first");
     }
     try {
       // Address of ABI Session Validation Module
@@ -118,7 +130,7 @@ const useCreateSession = async ({ smartAccount, address }) => {
       });
 
       const nftAddress = "0xdd526eba63ef200ed95f0f0fb8993fe3e20a23d0";
-      const recipient = "0xAddress";
+      const recipient = "0x06569702FA5144C7FB9FEd566cb9cD6E5A427b7B";
       // get only first 4 bytes for function selector
       const functionSelector = hexDataSlice(id("safeMint(address)"), 0, 4);
 
@@ -176,6 +188,8 @@ const useCreateSession = async ({ smartAccount, address }) => {
       console.error(err);
     }
   };
+
+  return createSession(true);
 };
 
 export default useCreateSession;

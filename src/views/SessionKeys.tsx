@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import createSessionKeys from "../utils/sessionKeys.ts";
+import useCreateSessionKeys from "../utils/sessionKeys.ts";
 import userOpWithSessionKeys from "../utils/userOpWithSessionKeys.ts";
 
 import { Box, VStack, HStack, Input, Button } from "@chakra-ui/react";
@@ -11,15 +11,16 @@ const SessionKeys: React.FC<any> = () => {
   const [sessionKeysClient, setSessionKeysClient] = React.useState(null);
   const [sendingTransaction, setSendingTransaction] = React.useState(false);
 
+  const localSessionKeysClient = useCreateSessionKeys(client);
+
   useEffect(() => {
     const createSessionKeysClient = async () => {
-      const localSessionKeysClient = await createSessionKeys(client);
       localSessionKeysClient.provider = client?.provider;
       setSessionKeysClient(localSessionKeysClient);
     };
 
     createSessionKeysClient();
-  }, []);
+  }, [client]);
 
   const handleSendSessionKeyUserOp = async (recipient, amount) => {
     try {
